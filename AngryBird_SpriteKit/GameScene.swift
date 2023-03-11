@@ -22,6 +22,8 @@ class GameScene: SKScene {
     
     var gameStarted = false
     
+    var originalPosition : CGPoint?
+    
     override func didMove(to view: SKView) {
         /*
         let texture = SKTexture(imageNamed: "bird")
@@ -46,6 +48,8 @@ class GameScene: SKScene {
         bird.physicsBody?.affectedByGravity = false
         bird.physicsBody?.isDynamic = true
         bird.physicsBody?.mass = 0.15
+        
+        originalPosition = bird.position
         
         
         //box
@@ -105,8 +109,30 @@ class GameScene: SKScene {
         bird.physicsBody?.applyImpulse(CGVector(dx: 50, dy: 100))
         bird.physicsBody?.affectedByGravity = true */
         
-        
-        
+        if gameStarted == false {
+            
+            if let touch = touches.first {
+                
+                let touchLocation = touch.location(in: self)
+                let touchNodes = nodes(at: touchLocation)
+                
+                if touchNodes.isEmpty == false {
+                    
+                    for node in touchNodes {
+                        
+                        if let sprite = node as? SKSpriteNode {
+                            
+                            if sprite == bird {
+                                bird.position = touchLocation
+                            }
+                            
+                        }
+                    }
+                }
+            
+            }
+            
+        }
         
     }
     
@@ -139,6 +165,40 @@ class GameScene: SKScene {
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        
+        if gameStarted == false {
+            
+            if let touch = touches.first {
+                
+                let touchLocation = touch.location(in: self)
+                let touchNodes = nodes(at: touchLocation)
+                
+                if touchNodes.isEmpty == false {
+                    
+                    for node in touchNodes {
+                        
+                        if let sprite = node as? SKSpriteNode {
+                            
+                            if sprite == bird {
+                                
+                                let dx = -(touchLocation.x - originalPosition!.x)
+                                let dy = -(touchLocation.y - originalPosition!.y)
+                                
+                                let impulse = CGVector(dx: dx, dy: dy)
+                                
+                                bird.physicsBody?.applyImpulse(impulse)
+                                bird.physicsBody?.affectedByGravity = true
+                                
+                                gameStarted = true
+                            }
+                            
+                        }
+                    }
+                }
+            
+            }
+            
+        }
         
     }
     
