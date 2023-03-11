@@ -8,7 +8,7 @@
 import SpriteKit
 import GameplayKit
 
-class GameScene: SKScene {
+class GameScene: SKScene, SKPhysicsContactDelegate {
     
     //var bird2 = SKSpriteNode()
     
@@ -24,6 +24,14 @@ class GameScene: SKScene {
     
     var originalPosition : CGPoint?
     
+    enum ColliderType : UInt32 {
+        
+        case Bird = 1
+        case Box = 2
+        
+        
+    }
+    
     override func didMove(to view: SKView) {
         /*
         let texture = SKTexture(imageNamed: "bird")
@@ -37,6 +45,7 @@ class GameScene: SKScene {
         
         self.physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
         self.scene?.scaleMode = .aspectFit
+        self.physicsWorld.contactDelegate = self
         
         //bird
         
@@ -50,6 +59,11 @@ class GameScene: SKScene {
         bird.physicsBody?.mass = 0.15
         
         originalPosition = bird.position
+        
+        bird.physicsBody?.contactTestBitMask = ColliderType.Bird.rawValue
+        bird.physicsBody?.categoryBitMask = ColliderType.Bird.rawValue
+        bird.physicsBody?.collisionBitMask = ColliderType.Bird.rawValue
+        
         
         
         //box
@@ -77,6 +91,8 @@ class GameScene: SKScene {
             box.physicsBody?.affectedByGravity = true
             box.physicsBody?.allowsRotation = true
             box.physicsBody?.mass = 0.4
+            
+            box.physicsBody?.collisionBitMask = ColliderType.Bird.rawValue
         }
         
         /*
@@ -86,7 +102,13 @@ class GameScene: SKScene {
         box1.physicsBody?.allowsRotation = true
         box1.physicsBody?.mass = 0.4 */
         
+    }
+    
+    func didBegin(_ contact: SKPhysicsContact) {
         
+        if contact.bodyA.collisionBitMask == ColliderType.Bird.rawValue || contact.bodyB.collisionBitMask == ColliderType.Bird.rawValue {
+            print(contact)
+        }
         
     }
     
