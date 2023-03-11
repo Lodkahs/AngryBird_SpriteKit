@@ -20,6 +20,8 @@ class GameScene: SKScene {
     var box4 = SKSpriteNode()
     var box5 = SKSpriteNode()
     
+    var gameStarted = false
+    
     override func didMove(to view: SKView) {
         /*
         let texture = SKTexture(imageNamed: "bird")
@@ -99,14 +101,41 @@ class GameScene: SKScene {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         
+        /*
         bird.physicsBody?.applyImpulse(CGVector(dx: 50, dy: 100))
-        bird.physicsBody?.affectedByGravity = true
+        bird.physicsBody?.affectedByGravity = true */
+        
+        
         
         
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         
+        if gameStarted == false {
+            
+            if let touch = touches.first {
+                
+                let touchLocation = touch.location(in: self)
+                let touchNodes = nodes(at: touchLocation)
+                
+                if touchNodes.isEmpty == false {
+                    
+                    for node in touchNodes {
+                        
+                        if let sprite = node as? SKSpriteNode {
+                            
+                            if sprite == bird {
+                                bird.position = touchLocation
+                            }
+                            
+                        }
+                    }
+                }
+            
+            }
+            
+        }
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
