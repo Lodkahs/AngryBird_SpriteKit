@@ -24,11 +24,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var originalPosition : CGPoint?
     
+    var score = 0
+    var scoreLabel = SKLabelNode()
+    
     enum ColliderType : UInt32 {
         
         case Bird = 1
         case Box = 2
-        
         
     }
     
@@ -62,7 +64,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         bird.physicsBody?.contactTestBitMask = ColliderType.Bird.rawValue
         bird.physicsBody?.categoryBitMask = ColliderType.Bird.rawValue
-        bird.physicsBody?.collisionBitMask = ColliderType.Bird.rawValue
+        bird.physicsBody?.collisionBitMask = ColliderType.Box.rawValue
         
         
         
@@ -95,19 +97,25 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             box.physicsBody?.collisionBitMask = ColliderType.Bird.rawValue
         }
         
-        /*
-        box1.physicsBody = SKPhysicsBody(rectangleOf: size)
-        box1.physicsBody?.isDynamic = true
-        box1.physicsBody?.affectedByGravity = true
-        box1.physicsBody?.allowsRotation = true
-        box1.physicsBody?.mass = 0.4 */
+        //label
+        
+        scoreLabel.fontName = "Helvetica"
+        scoreLabel.fontSize = 65
+        scoreLabel.fontColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1)
+        scoreLabel.text = "0"
+        scoreLabel.position = CGPoint(x: 0, y: self.frame.height / 3)
+        scoreLabel.zPosition = 2
+        self.addChild(scoreLabel)
+        
         
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
         
         if contact.bodyA.collisionBitMask == ColliderType.Bird.rawValue || contact.bodyB.collisionBitMask == ColliderType.Bird.rawValue {
-            print(contact)
+            
+            score += 1
+            scoreLabel.text = String(score)
         }
         
     }
@@ -241,7 +249,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 bird.physicsBody?.angularVelocity = 0
                 bird.zPosition = 1
                 bird.position = originalPosition!
+                
+                score = 0
+                scoreLabel.text = String(score)
                 gameStarted = false
+                
+                
                 
             }
         }
